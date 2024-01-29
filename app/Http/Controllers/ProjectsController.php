@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
  *
  * @version    v1.0
  */
-final class CompaniesController extends Controller
+class ProjectsController extends Controller
 {
     /**
      * Returns view to display listing of companies.
@@ -25,7 +25,17 @@ final class CompaniesController extends Controller
      */
     public function index()
     {
-        $this->authorize('view', Company::class);
+        // dd('projectscontroller');
+        // $this->authorize('view', Company::class);
+
+        return view('projects/index');
+    }
+
+    public function getIndex()
+    {
+        dd('projectscontroller');
+
+        // $this->authorize('view', Company::class);
 
         return view('companies/index');
     }
@@ -145,14 +155,14 @@ final class CompaniesController extends Controller
         }
 
         $this->authorize('delete', $company);
-        if (! $company->isDeletable()) {
+        if (!$company->isDeletable()) {
             return redirect()->route('companies.index')
-                    ->with('error', trans('admin/companies/message.assoc_users'));
+                ->with('error', trans('admin/companies/message.assoc_users'));
         }
 
         if ($company->image) {
             try {
-                Storage::disk('public')->delete('companies'.'/'.$company->image);
+                Storage::disk('public')->delete('companies' . '/' . $company->image);
             } catch (\Exception $e) {
                 \Log::debug($e);
             }

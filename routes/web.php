@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Account;
 use App\Http\Controllers\ActionlogController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CompaniesController;
 use App\Http\Controllers\DashboardController;
@@ -9,41 +12,44 @@ use App\Http\Controllers\DepartmentsController;
 use App\Http\Controllers\DepreciationsController;
 use App\Http\Controllers\GroupsController;
 use App\Http\Controllers\HealthController;
-use App\Http\Controllers\ImportsController;
 use App\Http\Controllers\LabelsController;
 use App\Http\Controllers\LocationsController;
 use App\Http\Controllers\ManufacturersController;
 use App\Http\Controllers\ModalController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StatuslabelsController;
 use App\Http\Controllers\SuppliersController;
 use App\Http\Controllers\ViewAssetsController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
 Route::group(['middleware' => 'auth'], function () {
     /*
-    * Companies
-    */
+     * Companies
+     */
     Route::resource('companies', CompaniesController::class, [
         'parameters' => ['company' => 'company_id'],
     ]);
 
     /*
-    * Categories
-    */
+     * Projects
+     */
+    Route::resource('projects', ProjectsController::class, [
+        'parameters' => ['project' => 'project_id'],
+    ]);
+
+    /*
+     * Categories
+     */
     Route::resource('categories', CategoriesController::class, [
         'parameters' => ['category' => 'category_id'],
     ]);
-  
+
     /*
-    * Labels
-    */
+     * Labels
+     */
     Route::get(
         'labels/{labelName}',
         [LabelsController::class, 'show']
@@ -54,7 +60,7 @@ Route::group(['middleware' => 'auth'], function () {
      */
 
     Route::group(['prefix' => 'locations', 'middleware' => ['auth']], function () {
-        
+
         Route::get('{locationId}/clone',
             [LocationsController::class, 'getClone']
         )->name('clone/location');
@@ -74,13 +80,12 @@ Route::group(['middleware' => 'auth'], function () {
         'parameters' => ['location' => 'location_id'],
     ]);
 
-
     /*
-    * Manufacturers
-    */
+     * Manufacturers
+     */
 
     Route::group(['prefix' => 'manufacturers', 'middleware' => ['auth']], function () {
-        Route::post('{manufacturers_id}/restore', [ManufacturersController::class, 'restore'] )->name('restore/manufacturer');
+        Route::post('{manufacturers_id}/restore', [ManufacturersController::class, 'restore'])->name('restore/manufacturer');
     });
 
     Route::resource('manufacturers', ManufacturersController::class, [
@@ -88,29 +93,29 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
 
     /*
-    * Suppliers
-    */
+     * Suppliers
+     */
     Route::resource('suppliers', SuppliersController::class, [
         'parameters' => ['supplier' => 'supplier_id'],
     ]);
 
     /*
-    * Depreciations
+     * Depreciations
      */
     Route::resource('depreciations', DepreciationsController::class, [
-         'parameters' => ['depreciation' => 'depreciation_id'],
-     ]);
+        'parameters' => ['depreciation' => 'depreciation_id'],
+    ]);
 
     /*
-    * Status Labels
+     * Status Labels
      */
     Route::resource('statuslabels', StatuslabelsController::class, [
-          'parameters' => ['statuslabel' => 'statuslabel_id'],
-      ]);
+        'parameters' => ['statuslabel' => 'statuslabel_id'],
+    ]);
 
     /*
-    * Departments
-    */
+     * Departments
+     */
     Route::resource('departments', DepartmentsController::class, [
         'parameters' => ['department' => 'department_id'],
     ]);
@@ -124,10 +129,10 @@ Route::group(['middleware' => 'auth'], function () {
 |
 | Routes for various modal dialogs to interstitially create various things
 |
-*/
+ */
 
 Route::group(['middleware' => 'auth', 'prefix' => 'modals'], function () {
-    Route::get('{type}/{itemId?}', [ModalController::class, 'show'] )->name('modal.show');
+    Route::get('{type}/{itemId?}', [ModalController::class, 'show'])->name('modal.show');
 });
 
 /*
@@ -137,7 +142,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'modals'], function () {
 |
 | Register all the admin routes.
 |
-*/
+ */
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get(
@@ -157,7 +162,7 @@ Route::group(['middleware' => 'auth'], function () {
 |
 | Register all the admin routes.
 |
-*/
+ */
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser']], function () {
     Route::get('settings', [SettingsController::class, 'getSettings'])->name('settings.general.index');
@@ -212,15 +217,15 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
         Route::delete('delete/{filename}',
             [SettingsController::class, 'deleteFile'])->name('settings.backups.destroy');
 
-        Route::post('/', 
+        Route::post('/',
             [SettingsController::class, 'postBackups']
         )->name('settings.backups.create');
 
-        Route::post('/restore/{filename}', 
+        Route::post('/restore/{filename}',
             [SettingsController::class, 'postRestore']
         )->name('settings.backups.restore');
 
-        Route::post('/upload', 
+        Route::post('/upload',
             [SettingsController::class, 'postUploadBackup']
         )->name('settings.backups.upload');
 
@@ -247,7 +252,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
 |
 |
 |
-*/
+ */
 
 Route::get('/import',
     \App\Http\Livewire\Importer::class
@@ -260,7 +265,7 @@ Route::get('/import',
 |
 |
 |
-*/
+ */
 Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
 
     // Profile
@@ -310,7 +315,7 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
         'print',
         [
             ProfileController::class,
-            'printInventory'
+            'printInventory',
         ]
     )->name('profile.print');
 
@@ -318,14 +323,14 @@ Route::group(['prefix' => 'account', 'middleware' => ['auth']], function () {
         'email',
         [
             ProfileController::class,
-            'emailAssetList'
+            'emailAssetList',
         ]
     )->name('profile.email_assets');
 
 });
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('reports/audit', 
+    Route::get('reports/audit',
         [ReportsController::class, 'audit']
     )->name('reports.audit');
 
@@ -392,7 +397,6 @@ Route::get(
     [LoginController::class, 'legacyAuthRedirect']
 );
 
-
 /*
 |--------------------------------------------------------------------------
 | Setup Routes
@@ -400,7 +404,7 @@ Route::get(
 |
 |
 |
-*/
+ */
 Route::group(['prefix' => 'setup', 'middleware' => 'web'], function () {
     Route::get(
         'user',
@@ -411,7 +415,6 @@ Route::group(['prefix' => 'setup', 'middleware' => 'web'], function () {
         'user',
         [SettingsController::class, 'postSaveFirstAdmin']
     )->name('setup.user.save');
-
 
     Route::get(
         'migrate',
@@ -433,10 +436,6 @@ Route::group(['prefix' => 'setup', 'middleware' => 'web'], function () {
         [SettingsController::class, 'getSetupIndex']
     )->name('setup');
 });
-
-
-
-
 
 Route::group(['middleware' => 'web'], function () {
 
@@ -475,7 +474,6 @@ Route::group(['middleware' => 'web'], function () {
         [ForgotPasswordController::class, 'showLinkRequestForm']
     )->name('password.request')->middleware('throttle:forgotten_password');
 
-
     Route::post(
         'password/reset',
         [ResetPasswordController::class, 'reset']
@@ -486,24 +484,21 @@ Route::group(['middleware' => 'web'], function () {
         [ResetPasswordController::class, 'showResetForm']
     )->name('password.reset');
 
-
     Route::post(
         'password/email',
         [ForgotPasswordController::class, 'sendResetLinkEmail']
     )->name('password.email')->middleware('throttle:forgotten_password');
 
-
-     // Socialite Google login
+    // Socialite Google login
     Route::get('google', 'App\Http\Controllers\GoogleAuthController@redirectToGoogle')->name('google.redirect');
     Route::get('google/callback', 'App\Http\Controllers\GoogleAuthController@handleGoogleCallback')->name('google.callback');
-
 
     Route::get(
         '/',
         [
             'as' => 'home',
             'middleware' => ['auth'],
-            'uses' => 'DashboardController@getIndex' ]
+            'uses' => 'DashboardController@getIndex']
     );
 
     // need to keep GET /logout for SAML SLO
@@ -521,7 +516,7 @@ Route::group(['middleware' => 'web'], function () {
 //Auth::routes();
 
 Route::get(
-    '/health', 
+    '/health',
     [HealthController::class, 'get']
 )->name('health');
 

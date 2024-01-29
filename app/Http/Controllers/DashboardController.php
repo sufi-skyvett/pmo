@@ -51,7 +51,16 @@ class DashboardController extends Controller
                 ->join('users_groups as ug', 'pg.id', '=', 'ug.group_id')
                 ->where('ug.user_id', '=', Auth::id())
                 ->first();
-            dd($results);
+
+            if (str_contains($results->name, 'Project Manager')) {
+                // dd($results->name);
+                return redirect()->route('projects.index');
+            } elseif (str_contains($results->name, 'Helpdesk')) {
+                return redirect()->route('projects.index');
+            } else {
+                // Handle other cases or return default view
+            }
+
             return redirect()->intended('account/view-assets');
         }
     }
