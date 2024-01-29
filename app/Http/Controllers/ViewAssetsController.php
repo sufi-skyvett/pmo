@@ -8,7 +8,6 @@ use App\Models\AssetModel;
 use App\Models\Company;
 use App\Models\Setting;
 use App\Models\User;
-use App\Models\CustomField;
 use App\Notifications\RequestAssetCancelation;
 use App\Notifications\RequestAssetNotification;
 use Illuminate\Http\Request;
@@ -37,7 +36,7 @@ class ViewAssetsController extends Controller
             'accessories',
             'licenses',
         )->find(Auth::user()->id);
-
+        // dd(1);
         $field_array = array();
 
         // Loop through all the custom fields that are applied to any model the user has assigned
@@ -51,7 +50,7 @@ class ViewAssetsController extends Controller
                     if ($field->display_in_user_view == '1') {
                         $field_array[$field->db_column] = $field->name;
                     }
-                    
+
                 }
             }
 
@@ -61,7 +60,7 @@ class ViewAssetsController extends Controller
         array_unique($field_array);
 
         if (isset($user->id)) {
-            return view('account/view-assets', compact('user', 'field_array' ))
+            return view('account/view-assets', compact('user', 'field_array'))
                 ->with('settings', Setting::getSettings());
         }
 
@@ -85,7 +84,7 @@ class ViewAssetsController extends Controller
     public function getRequestItem(Request $request, $itemType, $itemId = null, $cancel_by_admin = false, $requestingUser = null)
     {
         $item = null;
-        $fullItemType = 'App\\Models\\'.studly_case($itemType);
+        $fullItemType = 'App\\Models\\' . studly_case($itemType);
 
         if ($itemType == 'asset_model') {
             $itemType = 'model';
@@ -124,14 +123,14 @@ class ViewAssetsController extends Controller
             $data['item_quantity'] = ($item_request) ? $item_request->qty : 1;
             $logaction->logaction('request_canceled');
 
-            if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
+            if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (!config('app.lock_passwords'))) {
                 $settings->notify(new RequestAssetCancelation($data));
             }
 
             return redirect()->back()->with('success')->with('success', trans('admin/hardware/message.requests.canceled'));
         } else {
             $item->request();
-            if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (! config('app.lock_passwords'))) {
+            if (($settings->alert_email != '') && ($settings->alerts_enabled == '1') && (!config('app.lock_passwords'))) {
                 $logaction->logaction('requested');
                 $settings->notify(new RequestAssetNotification($data));
             }
@@ -154,7 +153,7 @@ class ViewAssetsController extends Controller
             return redirect()->route('requestable-assets')
                 ->with('error', trans('admin/hardware/message.does_not_exist_or_not_requestable'));
         }
-        if (! Company::isCurrentUserHasAccess($asset)) {
+        if (!Company::isCurrentUserHasAccess($asset)) {
             return redirect()->route('requestable-assets')
                 ->with('error', trans('general.insufficient_permissions'));
         }

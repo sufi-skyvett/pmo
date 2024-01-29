@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * This controller handles all actions related to the Admin Dashboard
@@ -37,7 +37,7 @@ class DashboardController extends Controller
             $counts['user'] = \App\Models\Company::scopeCompanyables(Auth::user())->count();
             $counts['grand_total'] = $counts['asset'] + $counts['accessory'] + $counts['license'] + $counts['consumable'];
 
-            if ((! file_exists(storage_path().'/oauth-private.key')) || (! file_exists(storage_path().'/oauth-public.key'))) {
+            if ((!file_exists(storage_path() . '/oauth-private.key')) || (!file_exists(storage_path() . '/oauth-public.key'))) {
                 Artisan::call('migrate', ['--force' => true]);
                 \Artisan::call('passport:install');
             }
@@ -45,6 +45,13 @@ class DashboardController extends Controller
             return view('dashboard')->with('asset_stats', $asset_stats)->with('counts', $counts);
         } else {
             // Redirect to the profile page
+            // dd(Auth::id());
+            $results = DB::table('permission_groups as pg')
+                ->select('pg.name')
+                ->join('users_groups as ug', 'pg.id', '=', 'ug.group_id')
+                ->where('ug.user_id', '=', Auth::id())
+                ->first();
+            dd($results);
             return redirect()->intended('account/view-assets');
         }
     }
