@@ -149,126 +149,75 @@
             <!-- Navbar Right Menu -->
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
-                    @can('index', \App\Models\Asset::class)
-                        <li aria-hidden="true" {!! Request::is('hardware*') ? ' class="active"' : '' !!} tabindex="-1">
-                            <a href="{{ url('hardware') }}" accesskey="1" tabindex="-1">
-                                <i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
-                                <span class="sr-only">{{ trans('general.assets') }}</span>
-                            </a>
-                        </li>
-                    @endcan
-                    @can('view', \App\Models\License::class)
-                        <li aria-hidden="true" {!! Request::is('licenses*') ? ' class="active"' : '' !!} tabindex="-1">
-                            <a href="{{ route('licenses.index') }}" accesskey="2" tabindex="-1">
-                                <i class="far fa-save fa-fw"></i>
-                                <span class="sr-only">{{ trans('general.licenses') }}</span>
-                            </a>
-                        </li>
-                    @endcan
-                    @can('index', \App\Models\Accessory::class)
-                        <li aria-hidden="true" {!! Request::is('accessories*') ? ' class="active"' : '' !!} tabindex="-1">
-                            <a href="{{ route('accessories.index') }}" accesskey="3" tabindex="-1">
-                                <i class="far fa-keyboard fa-fw"></i>
-                                <span class="sr-only">{{ trans('general.accessories') }}</span>
-                            </a>
-                        </li>
-                    @endcan
-                    @can('index', \App\Models\Consumable::class)
-                        <li aria-hidden="true"{!! Request::is('consumables*') ? ' class="active"' : '' !!}>
-                            <a href="{{ url('consumables') }}" accesskey="4" tabindex="-1">
-                                <i class="fas fa-tint fa-fw"></i>
-                                <span class="sr-only">{{ trans('general.consumables') }}</span>
-                            </a>
-                        </li>
-                    @endcan
-                    @can('view', \App\Models\Component::class)
-                        <li aria-hidden="true"{!! Request::is('components*') ? ' class="active"' : '' !!}>
-                            <a href="{{ route('components.index') }}" accesskey="5" tabindex="-1">
-                                <i class="far fa-hdd fa-fw"></i>
-                                <span class="sr-only">{{ trans('general.components') }}</span>
-                            </a>
-                        </li>
-                    @endcan
+                    <!-- Tasks: style can be found in dropdown.less -->
 
-                    @can('index', \App\Models\Asset::class)
-                        <li>
-                            <form class="navbar-form navbar-left form-horizontal" role="search"
-                                action="{{ route('findbytag/hardware') }}" method="get">
-                                <div class="col-xs-12 col-md-12">
-                                    <div class="col-xs-12 form-group">
-                                        <label class="sr-only" for="tagSearch">{{ trans('general.lookup_by_tag') }}</label>
-                                        <input type="text" class="form-control" id="tagSearch" name="assetTag"
-                                            placeholder="{{ trans('general.lookup_by_tag') }}">
-                                        <input type="hidden" name="topsearch" value="true" id="search">
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <button type="submit" class="btn btn-primary pull-right">
-                                            <i class="fas fa-search" aria-hidden="true"></i>
-                                            <span class="sr-only">{{ trans('general.search') }}</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </li>
-                    @endcan
+                    <li class="dropdown tasks-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-bell" style="font-size:20px;color:rgb(243, 234, 101)"
+                                aria-hidden="true"></i>
+                            <span class="sr-only">Alerts</span>
+                            {{-- @if (count($alert_items))
+                                <span class="label label-danger">{{ count($alert_items) }}</span>
+                            @endif --}}
+                        </a>
 
-                    @can('admin')
-                        <li class="dropdown" aria-hidden="true">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-                                {{ trans('general.create') }}
-                                <strong class="caret"></strong>
-                            </a>
-                            <ul class="dropdown-menu">
-                                @can('create', \App\Models\Asset::class)
-                                    <li {!! Request::is('hardware/create') ? 'class="active>"' : '' !!}>
-                                        <a href="{{ route('hardware.create') }}" tabindex="-1">
-                                            <i class="fas fa-barcode fa-fw" aria-hidden="true"></i>
-                                            {{ trans('general.asset') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('create', \App\Models\License::class)
-                                    <li {!! Request::is('licenses/create') ? 'class="active"' : '' !!}>
-                                        <a href="{{ route('licenses.create') }}" tabindex="-1">
-                                            <i class="far fa-save fa-fw" aria-hidden="true"></i>
-                                            {{ trans('general.license') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('create', \App\Models\Accessory::class)
-                                    <li {!! Request::is('accessories/create') ? 'class="active"' : '' !!}>
-                                        <a href="{{ route('accessories.create') }}" tabindex="-1">
-                                            <i class="far fa-keyboard fa-fw" aria-hidden="true"></i>
-                                            {{ trans('general.accessory') }}</a>
-                                    </li>
-                                @endcan
-                                @can('create', \App\Models\Consumable::class)
-                                    <li {!! Request::is('consunmables/create') ? 'class="active"' : '' !!}>
-                                        <a href="{{ route('consumables.create') }}" tabindex="-1">
-                                            <i class="fas fa-tint fa-fw" aria-hidden="true"></i>
-                                            {{ trans('general.consumable') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('create', \App\Models\Component::class)
-                                    <li {!! Request::is('components/create') ? 'class="active"' : '' !!}>
-                                        <a href="{{ route('components.create') }}" tabindex="-1">
-                                            <i class="far fa-hdd fa-fw" aria-hidden="true"></i>
-                                            {{ trans('general.component') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('create', \App\Models\User::class)
-                                    <li {!! Request::is('users/create') ? 'class="active"' : '' !!}>
-                                        <a href="{{ route('users.create') }}" tabindex="-1">
-                                            <i class="fas fa-user fa-fw" aria-hidden="true"></i>
-                                            {{ trans('general.user') }}
-                                        </a>
-                                    </li>
-                                @endcan
-                            </ul>
-                        </li>
-                    @endcan
+                        <ul class="dropdown-menu">
+                            <li class="header">You have fews to take action</li>
+                            {{-- <li class="header">You have {{ count($alert_items) }} to take action</li> --}}
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu">
+                                    {{-- @for ($i = 0; count($alert_items) > $i; $i++)
+                                        <li>
+                                            <a
+                                                href="{{ route($alert_items[$i]['type'] . '.show', $alert_items[$i]['id']) }}">
+                                                <p>{{ $alert_items[$i]['name'] }}
+                                                    <small class="pull-right">
+                                                        {{ $alert_items[$i]['remaining'] }}
+                                                    </small>
+                                                    <p>
+                                            </a>
+                                        </li>
+                                    @endfor --}}
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    {{-- @endcan --}}
+
+                    {{-- @can('admin') --}}
+                    <li class="dropdown tasks-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-flag" style="font-size:20px;color:red" aria-hidden="true"></i>
+                            <span class="sr-only">Alerts</span>
+                            {{-- @if (count($alert_items))
+                                <span class="label label-danger">{{ count($alert_items) }}</span>
+                            @endif --}}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">You have fews over the end date</li>
+                            {{-- <li class="header">You have {{ count($alert_items) }} over the end date</li> --}}
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu">
+                                    {{-- @for ($i = 0; count($alert_items) > $i; $i++)
+                                        <li>
+                                            <!-- Task item -->
+                                            <a
+                                                href="{{ route($alert_items[$i]['type'] . '.show', $alert_items[$i]['id']) }}">
+                                                <p>{{ $alert_items[$i]['name'] }}
+                                                    <small class="pull-right">
+                                                        {{ $alert_items[$i]['remaining'] }}
+                                                    </small>
+                                                </p>
+                                            </a>
+                                        </li>
+                                    @endfor --}}
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    {{-- @endcan --}}
 
                     <!-- User Account: style can be found in dropdown.less -->
                     @if (Auth::check())

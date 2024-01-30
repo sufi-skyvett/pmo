@@ -2,7 +2,14 @@
 
 {{-- Page title --}}
 @section('title')
-    {{ trans('general.companies') }}
+    PMO
+    @parent
+@stop
+
+@section('titlebody')
+    <strong style="text-align: center;font-family:Renogare Soft, sans-serif;">
+        Welcome to Project Management Office.
+    </strong>
     @parent
 @stop
 
@@ -15,33 +22,40 @@
     <div class="row">
         <div class="col-md-9">
             <div class="box box-default">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Projects</h3>
+                </div>
                 <div class="box-body">
-                    <div class="table-responsive">
+                    <ul>
+                        {{-- @foreach ($projects as $project)
+                            <li>{{ $project->name }}</li>
+                        @endforeach --}}
+                    </ul>
+                </div>
+            </div>
 
-                        <table data-columns="{{ \App\Presenters\CompanyPresenter::dataTableLayout() }}"
-                            data-cookie-id-table="companiesTable" data-pagination="true" data-id-table="companiesTable"
-                            data-search="true" data-side-pagination="server" data-show-columns="true"
-                            data-show-export="true" data-show-refresh="true" data-show-fullscreen="true"
-                            data-sort-order="asc" id="companiesTable" class="table table-striped snipe-table"
-                            data-url="{{ route('api.companies.index') }}"
-                            data-export-options='{
-                        "fileName": "export-companies-{{ date('Y-m-d') }}",
-                        "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-                        }'>
-
-                        </table>
-                    </div>
+            <div class="box box-default">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Tasks</h3>
+                </div>
+                <div class="box-body">
+                    <ul>
+                        {{-- @foreach ($tasks as $task)
+                            <li>{{ $task->name }} - {{ $task->project->name }}</li>
+                        @endforeach --}}
+                    </ul>
                 </div>
             </div>
         </div>
+
         <!-- side address column -->
         <div class="col-md-3">
-            <h2>{{ trans('admin/companies/general.about_companies') }}</h2>
-            <p>{{ trans('admin/companies/general.about_companies_description') }}</p>
+            <!-- You can add additional content or widgets here -->
         </div>
+    </div>
 
-    @stop
+@stop
 
-    @section('moar_scripts')
-        @include ('partials.bootstrap-table')
-    @stop
+@section('moar_scripts')
+    @include ('partials.bootstrap-table')
+@stop
